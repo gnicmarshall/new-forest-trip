@@ -227,7 +227,7 @@ export function RouteMap({ day, picks, onMarkerTap }) {
         if (!o.loc) return;
         if (picks[slot.id] === o.id) orderByOption[o.id] = si;
         const [x, y] = project(o.loc);
-        let c = clusters.find((k) => Math.hypot(k.x - x, k.y - y) < 11);
+        let c = clusters.find((k) => Math.hypot(k.x - x, k.y - y) < 16);
         if (!c) {
           c = { x, y, loc: o.loc, options: [] };
           clusters.push(c);
@@ -235,11 +235,14 @@ export function RouteMap({ day, picks, onMarkerTap }) {
         c.options.push(o);
       });
     });
-    const markers = clusters.map((c) => {
-      const selected = c.options.filter((o) => orderByOption[o.id] !== undefined);
-      const lead = selected[0] || null;
-      return { ...c, selected: lead, order: lead ? orderByOption[lead.id] : null, first: lead || c.options[0] };
-    });
+    const markers = clusters
+      .map((c) => {
+        const selected = c.options.filter((o) => orderByOption[o.id] !== undefined);
+        const lead = selected[0] || null;
+        return { ...c, selected: lead, order: lead ? orderByOption[lead.id] : null, first: lead || c.options[0] };
+      })
+      // Chosen pins draw last so they sit on top and always take the tap.
+      .sort((a, b) => (a.selected ? 1 : 0) - (b.selected ? 1 : 0));
     const pts = [start.loc];
     day.slots.forEach((slot) => {
       const o = slot.options.find((x) => x.id === picks[slot.id]);
@@ -342,7 +345,7 @@ export function RouteMap({ day, picks, onMarkerTap }) {
               }
             }}
           >
-            <circle cx={x} cy={y} r="18" className="m-hit" />
+            <circle cx={x} cy={y} r="13" className="m-hit" />
             <circle cx={x} cy={y} r={sel ? 9 : 5.5} className="m-pin" />
             {sel && (
               <text x={x} y={y + 3.2} textAnchor="middle" className="m-pin-t">{ROMAN[m.order]}</text>
