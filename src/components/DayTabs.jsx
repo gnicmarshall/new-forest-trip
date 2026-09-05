@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-export function DayTabs({ days, activeId, counts, onChange }) {
+export function DayTabs({ days, activeId, todayId, counts, onChange }) {
   const refs = useRef([]);
 
   function onKeyDown(e, index) {
@@ -21,6 +21,7 @@ export function DayTabs({ days, activeId, counts, onChange }) {
       {days.map((day, i) => {
         const active = day.id === activeId;
         const { picked, total } = counts[day.id];
+        const today = day.id === todayId;
         return (
           <button
             key={day.id}
@@ -31,12 +32,13 @@ export function DayTabs({ days, activeId, counts, onChange }) {
             aria-selected={active}
             aria-controls={`panel-${day.id}`}
             tabIndex={active ? 0 : -1}
-            className={`tab${active ? ' is-active' : ''}`}
+            className={`tab${active ? ' is-active' : ''}${today ? ' is-today' : ''}`}
             onClick={() => onChange(day.id)}
             onKeyDown={(e) => onKeyDown(e, i)}
           >
             <span className="tab-label">{day.label}</span>
-            <span className="tab-count" aria-label={`${picked} of ${total} picked`}>
+            <span className="tab-count" aria-label={`${picked} of ${total} picked${today ? ', today' : ''}`}>
+              {today ? 'Today · ' : ''}
               {picked}/{total}
             </span>
           </button>

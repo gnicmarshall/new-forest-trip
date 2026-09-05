@@ -1,6 +1,6 @@
 /* Offline support: cache the shell on install, then serve from cache and
    refresh in the background. Works once the page has loaded once. */
-const CACHE = 'dad70-v1';
+const CACHE = 'dad70-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

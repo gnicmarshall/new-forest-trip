@@ -1,11 +1,16 @@
 import { OptionCard } from './OptionCard.jsx';
+import { ROMAN } from '../nav.js';
 
-export function Slot({ slot, pickedId, raining, onPick }) {
+export function Slot({ slot, index, pickedId, raining, onPick }) {
   const chosen = slot.options.find((o) => o.id === pickedId);
   return (
     <section className="slot" aria-labelledby={`slot-${slot.id}`}>
       <header className="slot-head">
         <h2 className="slot-title" id={`slot-${slot.id}`}>
+          <span className="slot-num" aria-hidden="true">
+            {ROMAN[index]}
+          </span>
+          <span className="sr-only">Part {index + 1}. </span>
           {slot.title}
         </h2>
         {chosen ? (

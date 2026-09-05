@@ -20,5 +20,5 @@ export default defineConfig({
       },
     },
   ],
-  build: { outDir: 'dist-single', sourcemap: false },
+  build: { outDir: 'dist-single', sourcemap: false, assetsInlineLimit: 100000000 },
 });
