@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { buildPlan, planToText, copyText } from '../plan.js';
+import { directionsUrl, ROMAN } from '../nav.js';
 
 export function PlanSheet({ open, picks, pickedCount, totalSlots, onClose, onClear, onToast }) {
   const closeRef = useRef(null);
@@ -7,7 +8,6 @@ export function PlanSheet({ open, picks, pickedCount, totalSlots, onClose, onCle
   const [confirmClear, setConfirmClear] = useState(false);
   const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 
-  // Focus, escape, scroll lock.
   useEffect(() => {
     if (!open) return;
     setConfirmClear(false);
@@ -24,7 +24,7 @@ export function PlanSheet({ open, picks, pickedCount, totalSlots, onClose, onCle
       }
       if (e.key !== 'Tab' || !sheetRef.current) return;
       const focusables = sheetRef.current.querySelectorAll(
-        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+        'button:not([disabled]), [href], summary, [tabindex]:not([tabindex="-1"])'
       );
       if (focusables.length === 0) return;
       const first = focusables[0];
@@ -52,7 +52,7 @@ export function PlanSheet({ open, picks, pickedCount, totalSlots, onClose, onCle
 
   async function onCopy() {
     const ok = await copyText(text);
-    onToast(ok ? 'Copied. Paste it into WhatsApp.' : 'Could not copy. Long-press the text below instead.');
+    onToast(ok ? 'Copied. Paste it into WhatsApp.' : 'Could not copy. Open "Show as text" and long-press it.');
   }
 
   async function onShare() {
@@ -111,13 +111,27 @@ export function PlanSheet({ open, picks, pickedCount, totalSlots, onClose, onCle
                   <p className="plan-empty">Nothing picked yet</p>
                 ) : (
                   <ol className="plan-list">
-                    {items.map(({ slot, option }) => (
-                      <li key={slot.id} className="plan-item">
-                        <span className="plan-slot">{slot.title}</span>
-                        <span className="plan-name">{option.name}</span>
-                        <span className="plan-meta">{option.meta}</span>
-                      </li>
-                    ))}
+                    {items.map(({ slot, option }) => {
+                      const nav = directionsUrl(option.place);
+                      const index = day.slots.indexOf(slot);
+                      return (
+                        <li key={slot.id} className="plan-item">
+                          <span className="plan-num" aria-hidden="true">
+                            {ROMAN[index]}
+                          </span>
+                          <span className="plan-text">
+                            <span className="plan-slot">{slot.title}</span>
+                            <span className="plan-name">{option.name}</span>
+                            <span className="plan-meta">{option.meta}</span>
+                          </span>
+                          {nav && (
+                            <a className="plan-nav" href={nav} target="_blank" rel="noopener noreferrer" aria-label={`Directions to ${option.name}`}>
+                              <span aria-hidden="true">➶</span>
+                            </a>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ol>
                 )}
               </section>
