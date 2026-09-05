@@ -1,0 +1,13 @@
+{
+  "name": "Dad's 70th — Beaulieu",
+  "short_name": "Dad's 70th",
+  "description": "Pick the weekend's itinerary as you go.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#122019",
+  "theme_color": "#122019",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
